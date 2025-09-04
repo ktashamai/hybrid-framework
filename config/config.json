@@ -1,0 +1,7 @@
+
+{
+    "base_url": "https://example.com",
+    "browser": "chrome",
+    "username": "testuser",
+    "password": "password123"
+}
