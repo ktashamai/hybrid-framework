@@ -1,10 +1,13 @@
 import pytest
 from pages.login_page import LoginPage
 
-@pytest.mark.usefixtures('setup')
+@pytest.mark.usefixtures("driver")
 class TestLogin:
-    def test_valid_login(self):
-        self.driver.get('https://example.com/login')
-        login_page = LoginPage(self.driver)
-        login_page.login('admin', 'admin123')
-        assert 'Dashboard' in self.driver.title
+
+    def test_valid_login(self, driver):
+        driver.get("https://www.saucedemo.com/")
+        login_page = LoginPage(driver)
+        login_page.login("standard_user", "secret_sauce")
+
+        # Verify login successful by checking URL contains /inventory.html
+        assert "inventory.html" in driver.current_url
