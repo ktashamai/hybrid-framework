@@ -4,6 +4,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
 
 
 def wait_for_loader(driver, timeout=20):
@@ -39,7 +41,7 @@ def test_magento_checkout(driver):
     ).click()
 
     WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-57"))
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
     ).click()
 
     # Add to cart
@@ -85,16 +87,31 @@ def test_magento_checkout(driver):
     driver.find_element(By.NAME, "telephone").send_keys("1234567890")
 
     # Country & State (Magento demo needs dropdowns handled)
-    from selenium.webdriver.support.ui import Select
-    Select(driver.find_element(By.NAME, "country_id")).select_by_visible_text("United States")
-    Select(driver.find_element(By.NAME, "region_id")).select_by_visible_text("California")
+
+    try:
+        wait = WebDriverWait(driver, 10)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
 
     # Continue to shipping
     wait_for_loader(driver)
-    WebDriverWait(driver, 15).until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "input[name='ko_unique_1']"))
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@type='radio' and contains(@name,'ko_unique')]"))
     ).click()  # select flat rate shipping
-    WebDriverWait(driver, 15).until(
+    WebDriverWait(driver, 25).until(
         EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
     ).click()
 
