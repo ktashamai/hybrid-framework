@@ -68,12 +68,18 @@ def test_magento_checkout(driver):
         )
     )
 
+
+
     # Proceed to checkout
     wait_for_loader(driver)
     checkout_btn = WebDriverWait(driver, 15).until(
         EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
     )
     checkout_btn.click()
+
+    WebDriverWait(driver, 10).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
 
     # Fill checkout form (guest checkout)
     wait_for_loader(driver)
@@ -106,12 +112,16 @@ def test_magento_checkout(driver):
     except TimeoutException:
         print("Element not found within the given time")
 
+    WebDriverWait(driver, 10).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
     # Continue to shipping
     wait_for_loader(driver)
     WebDriverWait(driver, 25).until(
-        EC.element_to_be_clickable((By.XPATH, "//input[@type='radio' and contains(@name,'ko_unique')]"))
+        EC.element_to_be_clickable((By.XPATH, "//span[contains(text(),'Flat Rate')]/ancestor::tr//input"))
     ).click()  # select flat rate shipping
-    WebDriverWait(driver, 25).until(
+    WebDriverWait(driver, 30).until(
         EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
     ).click()
 
