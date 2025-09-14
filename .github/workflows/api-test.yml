@@ -1,4 +1,4 @@
-name: Python CI Pipeline
+name: API Tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,8 +22,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt   # ✅ install all dependencies
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip list   # ✅ debug: confirm that 'requests' got installed
 
-      - name: Run tests
+      - name: Run pytest
         run: |
           pytest --maxfail=1 --disable-warnings -q
