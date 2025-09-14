@@ -25,6 +25,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip list  # confirm 'requests' and others installed
+
           pip install -r hybrid-framework/requirements.txt  # 🔑 path to your requirements
           pip list  # ✅ confirm 'requests' installed
 
