@@ -32,20 +32,20 @@ def test_magento_checkout(driver):
         pass
 
     # Open first product
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 25).until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
     ).click()
 
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 25).until(
         EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
     ).click()
 
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 25).until(
         EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
     ).click()
 
     # Add to cart
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 25).until(
         EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
     ).click()
 
@@ -61,7 +61,7 @@ def test_magento_checkout(driver):
         EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
     )
     ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
-    WebDriverWait(driver, 20).until(
+    WebDriverWait(driver, 25).until(
         EC.text_to_be_present_in_element(
             (By.CSS_SELECTOR, ".counter-number"),
             "1"
@@ -72,18 +72,18 @@ def test_magento_checkout(driver):
 
     # Proceed to checkout
     wait_for_loader(driver)
-    checkout_btn = WebDriverWait(driver, 15).until(
+    checkout_btn = WebDriverWait(driver, 25).until(
         EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
     )
     checkout_btn.click()
 
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 25).until(
         EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
     )
 
     # Fill checkout form (guest checkout)
     wait_for_loader(driver)
-    WebDriverWait(driver, 20).until(
+    WebDriverWait(driver, 25).until(
         EC.presence_of_element_located((By.NAME, "firstname"))
     ).send_keys("John")
     driver.find_element(By.NAME, "lastname").send_keys("Doe")
@@ -95,7 +95,7 @@ def test_magento_checkout(driver):
     # Country & State (Magento demo needs dropdowns handled)
 
     try:
-        wait = WebDriverWait(driver, 10)  # wait up to 10 seconds
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
 
         # Wait for country dropdown to be visible
         country_dropdown = wait.until(
@@ -112,14 +112,14 @@ def test_magento_checkout(driver):
     except TimeoutException:
         print("Element not found within the given time")
 
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
     )
 
     # Continue to shipping
     wait_for_loader(driver)
     WebDriverWait(driver, 25).until(
-        EC.element_to_be_clickable((By.XPATH, "//span[contains(text(),'Flat Rate')]/ancestor::tr//input"))
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
     ).click()  # select flat rate shipping
     WebDriverWait(driver, 30).until(
         EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
@@ -128,12 +128,2084 @@ def test_magento_checkout(driver):
     actions = ActionChains(driver)
     actions.send_keys(Keys.PAGE_UP).perform()
 
-    email_field = WebDriverWait(driver, 20).until(
+    email_field = WebDriverWait(driver, 25).until(
         EC.presence_of_element_located((By.ID, "customer-email"))
     )
     email_field.send_keys("roni_cost@example.com")
 
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
     WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+# email_password= WebDriverWait(driver, 20).until(
+#    EC.presence_of_element_located((By.ID, "customer-password"))
+# )
+# email_password.send_keys("roni_cost3@example.com")
+
+# WebDriverWait(driver, 15).until(
+#   EC.element_to_be_clickable(By.ID, "//fieldset[@class ='fieldset login'] // span[contains(text(), 'Sign In')]")).click()
+
+
+import pytest
+from selenium.webdriver import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import Select
+
+
+def wait_for_loader(driver, timeout=20):
+    """Wait until Magento loading overlay disappears."""
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, "div.loading-mask"))
+        )
+    except:
+        pass
+
+
+@pytest.mark.usefixtures("driver")
+def test_magento_checkout(driver):
+    driver.get("https://magento2-demo.magebit.com/")
+    WebDriverWait(driver, 15).until(
+        EC.presence_of_element_located((By.CSS_SELECTOR, "body"))
+    )
+
+    # Close popup if it appears
+    try:
+        driver.find_element(By.CSS_SELECTOR, ".action-close").click()
+    except:
+        pass
+
+    # Open first product
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, "a.product-item-link"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-size-157-item-170"))
+    ).click()
+
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "option-label-color-93-item-50"))
+    ).click()
+
+    # Add to cart
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "product-addtocart-button"))
+    ).click()
+
+    WebDriverWait(driver, 20).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".message-success.success.message"),
+            "You added"
+        )
+    )
+    # Wait for mini cart update
+    wait_for_loader(driver)
+    cart_icon = WebDriverWait(driver, 15).until(
+        EC.element_to_be_clickable((By.CSS_SELECTOR, ".minicart-wrapper .showcart"))
+    )
+    ActionChains(driver).move_to_element(cart_icon).pause(1).click().perform()
+    WebDriverWait(driver, 25).until(
+        EC.text_to_be_present_in_element(
+            (By.CSS_SELECTOR, ".counter-number"),
+            "1"
+        )
+    )
+
+
+
+    # Proceed to checkout
+    wait_for_loader(driver)
+    checkout_btn = WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.ID, "top-cart-btn-checkout"))
+    )
+    checkout_btn.click()
+
+    WebDriverWait(driver, 25).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Fill checkout form (guest checkout)
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.NAME, "firstname"))
+    ).send_keys("John")
+    driver.find_element(By.NAME, "lastname").send_keys("Doe")
+    driver.find_element(By.NAME, "street[0]").send_keys("123 Test St")
+    driver.find_element(By.NAME, "city").send_keys("Testville")
+    driver.find_element(By.NAME, "postcode").send_keys("12345")
+    driver.find_element(By.NAME, "telephone").send_keys("1234567890")
+
+    # Country & State (Magento demo needs dropdowns handled)
+
+    try:
+        wait = WebDriverWait(driver, 30)  # wait up to 10 seconds
+
+        # Wait for country dropdown to be visible
+        country_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "country_id"))
+        )
+        Select(country_dropdown).select_by_visible_text("United States")
+
+        # Wait for region dropdown to be visible
+        region_dropdown = wait.until(
+            EC.visibility_of_element_located((By.NAME, "region_id"))
+        )
+        Select(region_dropdown).select_by_visible_text("California")
+
+    except TimeoutException:
+        print("Element not found within the given time")
+
+    WebDriverWait(driver, 30).until(
+        EC.invisibility_of_element_located((By.CSS_SELECTOR, ".loading-mask"))
+    )
+
+    # Continue to shipping
+    wait_for_loader(driver)
+    WebDriverWait(driver, 25).until(
+        EC.element_to_be_clickable((By.XPATH, "//input[@value='flatrate_flatrate']"))
+    ).click()  # select flat rate shipping
+    WebDriverWait(driver, 30).until(
+        EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
+    ).click()
+
+    actions = ActionChains(driver)
+    actions.send_keys(Keys.PAGE_UP).perform()
+
+    email_field = WebDriverWait(driver, 25).until(
+        EC.presence_of_element_located((By.ID, "customer-email"))
+    )
+    email_field.send_keys("roni_cost@example.com")
+
+    WebDriverWait(driver, 25).until(
         EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Next']"))
     ).click()
 

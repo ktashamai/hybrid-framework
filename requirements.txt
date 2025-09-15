@@ -3,3 +3,7 @@ pytest
 pytest-html
 openpyxl
 requests
+<<<<<<< HEAD
+=======
+
+>>>>>>> c56771b (Add API tests and update requirements)
